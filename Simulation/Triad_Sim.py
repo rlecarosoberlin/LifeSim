@@ -19,12 +19,12 @@ class Seq:
         return self.seq
     
     
-    # Not all sequences are unique so this is just a bad idea
-    def __eq__(self, value):
-        return self.seq==value.seq
+    # # Not all sequences are unique so this is just a bad idea
+    # def __eq__(self, value):
+    #     return self.seq==value.seq
     
-    def __hash__(self):
-        return hash(self.seq)
+    # def __hash__(self):
+    #     return hash(self.seq)
 
     def comp(self, other):
         """
@@ -140,9 +140,8 @@ def read_data() -> list[Seq]:
 
     return seq_list
 
-def dfs (triad_lst: list[Triad]):
-    # Creates a dictionary that maps each edge to a list of triads that contain it by the triads' indices
-    edge_triad_map = defaultdict(list)
+def dfs (triad_lst: list[Triad], edge_triad_map= defaultdict(list)):
+    # Uses a dictionary that maps each edge to a list of triads that contain it by the triads' indices
     for i, triad in enumerate(triad_lst):
         for edge in triad.edges:
             edge_triad_map[edge].append(i)
@@ -178,7 +177,7 @@ def dfs (triad_lst: list[Triad]):
                 current = stack.pop()
                 group.append(triad_lst[current])
 
-                # add all neighbors to the exploration list and marks them as visited
+                # add all unvisited neighbors to the exploration list and marks them as visited
                 for neighbour in adjacency_list[current]:
                     if not visited[neighbour]:
                         visited[neighbour] = True
@@ -188,15 +187,6 @@ def dfs (triad_lst: list[Triad]):
             groupings.append(group)
     
     return groupings
-
-    # # For each triad in the triad set, add the triads to the group of similar triads
-    # for triad1 in triad_set:
-    #     for triad2 in triad_set:
-    #         # Checks if triads are not the same triads and then checks if triads share an edge
-    #         if triad1 != triad2:
-    #             if not (triad1.edges.isdisjoint(triad2.edges)):
-    #                 triad1.group.add(triad2)
-    #                 triad2.group.add(triad1)
 
 def test():
     """"
@@ -217,7 +207,7 @@ def test():
 
     groupings = dfs(triad_list)
 
-    print(len(groupings))
+    print(groupings)
 
     print("test")
 
@@ -232,23 +222,28 @@ def main():
     # Create all edges that meet threshold
     for i in range(len(seq_list)):
         # print(i)
-        seqA= seq_list[i]
+        seqA = seq_list[i]
         for ii in range(i+1,len(seq_list)):
             seqB= seq_list[ii]
             if (seqA.comp(seqB))>=threshold:
                 edge_set.add(Edge(seqA,seqB))
             
     # print(len(edge_set))
-    triad_set= []
+    triad_lst = []
+    edge_triad_map = defaultdict(list)
 
     # Create triads for every edge that meets the threshold
     for edge in edge_set:
         for seq in seq_list:
-            triad= edge.build_triad(seq, threshold)
+            triad = edge.build_triad(seq, threshold)
             if not (triad==None):
-                triad_set.append(triad)
+                triad_lst.append(triad)
+                edge_triad_map[edge].append(triad)
     
-    print (len (triad_set))
+    # print (len (triad_lst))
+    
+    groupings = dfs(triad_lst,edge_triad_map)
+    print(groupings)
 
 
 if __name__=='__main__':
