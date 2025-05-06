@@ -1,0 +1,28 @@
+parameter, argument
+outputDirectory,/Users/baerhodge/Desktop/HGTLifeSimData/
+runID,testRun
+pGenSize,1000
+censusTimes,(1| 50| 100)
+mutationRate,0.001
+hgtConjRate,0.1
+hgtTranRate,0.1
+motility,2
+hgtMaxDistance,1
+replDeathRate,0.3
+spaceSize,50
+foodSources,[(25| 1000)]
+foodShelfLife,(40| 80)
+hungerTolerance,1
+fedReplBoost,0.05
+plotYLim,100
+geneLength,1500
+geneNumber,20
+replRateChangeMax,0.0
+deathRateChangeMax,0.0
+motilityChangeMax,0
+mutationRateChangeMax,0.0
+hgtTranRateChangeMax,0.0
+hgtConjRateChangeMax,0.0
+foodGaussMean,0.0
+foodGaussSigma,1.0
+genomeType,relatedRandom
