@@ -110,6 +110,7 @@ class Triad:
     def __str__(self):
         return self.seqs
     
+    # For debugger representation, ignore
     def __repr__(self):
         seqs = []
         for seq in self.seqs:
@@ -121,7 +122,8 @@ class Triad:
 
 def read_data() -> list[Seq]:
     # open file
-    file= open("testRun_timeStep0.csv", "r")
+    file_name= "Simulation\\testRun_modified_timeStep100.csv"
+    file= open(file_name, "r")
     lines= file.readlines()
     file.close()
 
@@ -140,19 +142,23 @@ def read_data() -> list[Seq]:
 
     return seq_list
 
-def dfs (triad_lst: list[Triad], edge_triad_map= defaultdict(list)):
-    # Uses a dictionary that maps each edge to a list of triads that contain it by the triads' indices
+def dfs (triad_lst: list[Triad]):
+    """ 
+    Depth First Search to group Triads together
+    """
+    # Uses a dictionary that maps each edge to a list of indices of triads that contain it
+    edge_triad_map= defaultdict(list)
     for i, triad in enumerate(triad_lst):
         for edge in triad.edges:
             edge_triad_map[edge].append(i)
-        
-    # Build adjacency list by iterating over the lists of triads that share an edge and then map each triad to a list of all triads it's adjacent to
+
+    # Build adjacency lists for triads by adding all triads with a shared edge to each other's adjacency list
     adjacency_list= defaultdict(list)
-    for edge, triad_ind in edge_triad_map.items():
-        for i in range(len(triad_ind)):
-            for ii in range(i+1, len(triad_ind)):
-                t1= triad_ind[i]
-                t2= triad_ind[ii]
+    for edge, triads in edge_triad_map.items():
+        for i in range(len(triads)):
+            for ii in range(i+1, len(triads)):
+                t1= triads[i]
+                t2= triads[ii]
                 adjacency_list[t1].append(t2)
                 adjacency_list[t2].append(t1)
 
@@ -163,7 +169,7 @@ def dfs (triad_lst: list[Triad], edge_triad_map= defaultdict(list)):
 
     # Iterate over each triad using their index
     for i in range(len(triad_lst)):
-        # If Triad is not visited
+        # If Triad is not visited -> create a new grouping by searching through until no further shared edges are found, else make a new group with next unvisited triad
         if not visited[i]:
             # Initialise the group of Triads
             group = []
@@ -190,7 +196,7 @@ def dfs (triad_lst: list[Triad], edge_triad_map= defaultdict(list)):
 
 def test():
     """"
-    Function for running tests, ignore
+    Test sequence grouping
     """
     a=Seq("A")
     b=Seq("B")
@@ -199,17 +205,17 @@ def test():
     e=Seq("E")
     f=Seq("F")
     g=Seq("G")
+    j=Seq("J")
+    k=Seq("K")
+    l=Seq("L")
     x=Seq("X")
     y=Seq("Y")
     z=Seq("Z")
     
-    triad_list = [Triad(a,b,c),Triad(a,b,d),Triad(b,c,d),Triad(d,e,f),Triad(e,f,g),Triad(x,y,z),Triad(a,b,e)]
-
+    triad_list = [Triad(a,b,c),Triad(a,b,d),Triad(b,c,d),Triad(d,e,f),Triad(e,f,g),Triad(x,y,z),Triad(a,b,e),Triad(j,k,l),Triad(b,c,j)]
     groupings = dfs(triad_list)
 
     print(groupings)
-
-    print("test")
 
 def main():
     test()
@@ -228,7 +234,7 @@ def main():
             if (seqA.comp(seqB))>=threshold:
                 edge_set.add(Edge(seqA,seqB))
             
-    # print(len(edge_set))
+    print(len(edge_set))
     triad_lst = []
     edge_triad_map = defaultdict(list)
 
@@ -240,9 +246,9 @@ def main():
                 triad_lst.append(triad)
                 edge_triad_map[edge].append(triad)
     
-    # print (len (triad_lst))
+    print(len(triad_lst))
     
-    groupings = dfs(triad_lst,edge_triad_map)
+    groupings = dfs(triad_lst)
     print(groupings)
 
 
